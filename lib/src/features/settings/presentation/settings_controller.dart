@@ -15,6 +15,8 @@ class SettingsController extends _$SettingsController {
     final repository = ref.read(settingsRepositoryProvider);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => repository.setThemeMode(mode.name));
+    // Invalidate themeModeProvider so it re-reads the new value
+    ref.invalidate(themeModeProvider);
   }
 }
 
