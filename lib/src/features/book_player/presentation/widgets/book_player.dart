@@ -47,11 +47,27 @@ class _BookPlayerState extends State<BookPlayer> {
     }
   }
 
+  bool _isPdfBook() {
+    // Check explicit type first
+    if (widget.book.type == 'pdf') return true;
+    
+    // Infer from fileUrl extension
+    final fileUrl = widget.book.fileUrl;
+    if (fileUrl != null) {
+      final lowerUrl = fileUrl.toLowerCase();
+      // Remove query params before checking extension
+      final urlWithoutParams = lowerUrl.split('?').first;
+      if (urlWithoutParams.endsWith('.pdf')) return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('BookPlayer: type=${widget.book.type}, fileUrl=${widget.book.fileUrl}');
+    final isPdf = _isPdfBook();
+    print('BookPlayer: type=${widget.book.type}, fileUrl=${widget.book.fileUrl}, isPdf=$isPdf');
     
-    if (widget.book.type == 'pdf' && widget.book.fileUrl != null) {
+    if (isPdf && widget.book.fileUrl != null) {
       print('Loading PDF from: ${widget.book.fileUrl}');
       
       return FutureBuilder<PdfDocument>(

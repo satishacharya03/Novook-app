@@ -19,7 +19,7 @@ class SettingsController extends _$SettingsController {
 }
 
 @riverpod
-ThemeMode themeMode(ThemeModeRef ref) {
+ThemeMode themeMode(Ref ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   final modeName = repository.getThemeMode();
   return ThemeMode.values.firstWhere(

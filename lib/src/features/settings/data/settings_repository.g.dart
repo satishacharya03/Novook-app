@@ -48,7 +48,7 @@ final class SharedPreferencesProvider
   }
 }
 
-String _$sharedPreferencesHash() => r'd0f94d4bd61259b4c06d24df95d1afc7eb5bd1c6';
+String _$sharedPreferencesHash() => r'48e60558ea6530114ea20ea03e69b9fb339ab129';
 
 @ProviderFor(settingsRepository)
 const settingsRepositoryProvider = SettingsRepositoryProvider._();
@@ -96,4 +96,4 @@ final class SettingsRepositoryProvider
 }
 
 String _$settingsRepositoryHash() =>
-    r'326bb87e83c66802e8da227a3881b28e1271bb6c';
+    r'11d0dc1f049b3167675e5af0ad1cf00f2ce661e0';

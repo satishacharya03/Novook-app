@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'settings_repository.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<SharedPreferences> sharedPreferences(SharedPreferencesRef ref) {
+Future<SharedPreferences> sharedPreferences(Ref ref) {
   return SharedPreferences.getInstance();
 }
 
 @Riverpod(keepAlive: true)
-SettingsRepository settingsRepository(SettingsRepositoryRef ref) {
+SettingsRepository settingsRepository(Ref ref) {
   final sharedPreferences = ref.watch(sharedPreferencesProvider).requireValue;
   return SettingsRepository(sharedPreferences);
 }

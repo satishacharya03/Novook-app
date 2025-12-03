@@ -11,17 +11,19 @@ part of 'book.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$Book {
 
- String get id; String get title; String get author; String? get coverUrl; String? get cover; String? get coverColor; User? get uploader; String? get uploaderId; int get views; String? get timestamp; DateTime? get createdAt; String? get fileUrl; dynamic get content;// String or other content
- String get type;
+ String get id; String get title; String get author; String? get coverUrl; String? get cover; String? get coverColor; User? get uploader; String? get uploaderId; int get views; String? get timestamp; DateTime? get createdAt; String? get fileUrl; dynamic get content; String get type;
 /// Create a copy of Book
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $BookCopyWith<Book> get copyWith => _$BookCopyWithImpl<Book>(this as Book, _$identity);
 
+  /// Serializes this Book to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
@@ -29,7 +31,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is Book&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.cover, cover) || other.cover == cover)&&(identical(other.coverColor, coverColor) || other.coverColor == coverColor)&&(identical(other.uploader, uploader) || other.uploader == uploader)&&(identical(other.uploaderId, uploaderId) || other.uploaderId == uploaderId)&&(identical(other.views, views) || other.views == views)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.content, content)&&(identical(other.type, type) || other.type == type));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,id,title,author,coverUrl,cover,coverColor,uploader,uploaderId,views,timestamp,createdAt,fileUrl,const DeepCollectionEquality().hash(content),type);
 
@@ -138,10 +140,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _Book():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -200,10 +199,7 @@ return $default(_that.id,_that.title,_that.author,_that.coverUrl,_that.cover,_th
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String author,  String? coverUrl,  String? cover,  String? coverColor,  User? uploader,  String? uploaderId,  int views,  String? timestamp,  DateTime? createdAt,  String? fileUrl,  dynamic content,  String type)  $default,) {final _that = this;
 switch (_that) {
 case _Book():
-return $default(_that.id,_that.title,_that.author,_that.coverUrl,_that.cover,_that.coverColor,_that.uploader,_that.uploaderId,_that.views,_that.timestamp,_that.createdAt,_that.fileUrl,_that.content,_that.type);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.title,_that.author,_that.coverUrl,_that.cover,_that.coverColor,_that.uploader,_that.uploaderId,_that.views,_that.timestamp,_that.createdAt,_that.fileUrl,_that.content,_that.type);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -229,11 +225,11 @@ return $default(_that.id,_that.title,_that.author,_that.coverUrl,_that.cover,_th
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _Book implements Book {
   const _Book({required this.id, required this.title, required this.author, this.coverUrl, this.cover, this.coverColor, this.uploader, this.uploaderId, this.views = 0, this.timestamp, this.createdAt, this.fileUrl, this.content, this.type = 'text'});
-  
+  factory _Book.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);
 
 @override final  String id;
 @override final  String title;
@@ -248,7 +244,6 @@ class _Book implements Book {
 @override final  DateTime? createdAt;
 @override final  String? fileUrl;
 @override final  dynamic content;
-// String or other content
 @override@JsonKey() final  String type;
 
 /// Create a copy of Book
@@ -257,14 +252,17 @@ class _Book implements Book {
 @pragma('vm:prefer-inline')
 _$BookCopyWith<_Book> get copyWith => __$BookCopyWithImpl<_Book>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$BookToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _Book&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.cover, cover) || other.cover == cover)&&(identical(other.coverColor, coverColor) || other.coverColor == coverColor)&&(identical(other.uploader, uploader) || other.uploader == uploader)&&(identical(other.uploaderId, uploaderId) || other.uploaderId == uploaderId)&&(identical(other.views, views) || other.views == views)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.content, content)&&(identical(other.type, type) || other.type == type));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,id,title,author,coverUrl,cover,coverColor,uploader,uploaderId,views,timestamp,createdAt,fileUrl,const DeepCollectionEquality().hash(content),type);
 
