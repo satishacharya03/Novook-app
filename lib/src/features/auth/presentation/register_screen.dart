@@ -3,26 +3,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'auth_controller.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends ConsumerStatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
     try {
-      final success = await ref.read(authControllerProvider.notifier).login(
+      final success = await ref.read(authControllerProvider.notifier).register(
+        _nameController.text,
         _emailController.text,
         _passwordController.text,
       );
@@ -32,7 +43,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: ${e.toString()}')),
+          SnackBar(content: Text('Registration failed: ${e.toString()}')),
         );
       }
     } finally {
@@ -44,14 +55,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Create Account'),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -62,23 +78,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'novook',
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontFamily: 'Playfair Display',
+                  'Join Novook',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to continue',
+                  'Create an account to start reading',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 32),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Full Name',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Please enter your name' : null,
+                ),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -87,8 +113,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter email' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter email';
+                    }
+                    if (!value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -106,12 +139,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   obscureText: _obscurePassword,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscureConfirmPassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined),
+                      onPressed: () =>
+                          setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                    ),
+                  ),
+                  obscureText: _obscureConfirmPassword,
                   validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter password' : null,
+                      value == null || value.isEmpty ? 'Please confirm password' : null,
                 ),
                 const SizedBox(height: 24),
                 FilledButton(
-                  onPressed: _isLoading ? null : _login,
+                  onPressed: _isLoading ? null : _register,
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
@@ -121,25 +180,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Sign In'),
+                      : const Text('Create Account'),
                 ),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account?"),
+                    const Text('Already have an account?'),
                     TextButton(
-                      onPressed: () => context.push('/register'),
-                      child: const Text('Create Account'),
+                      onPressed: () => context.go('/login'),
+                      child: const Text('Sign In'),
                     ),
                   ],
-                ),
-                const SizedBox(height: 24),
-                const Divider(),
-                const SizedBox(height: 24),
-                OutlinedButton(
-                  onPressed: () => context.go('/'),
-                  child: const Text('Continue as Guest'),
                 ),
               ],
             ),

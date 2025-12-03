@@ -20,19 +20,23 @@ class ScaffoldWithNavbar extends StatelessWidget {
         destinations: const [
           NavigationDestination(
             icon: Icon(LucideIcons.home),
+            selectedIcon: Icon(LucideIcons.home, fill: 1),
             label: 'Home',
           ),
           NavigationDestination(
             icon: Icon(LucideIcons.compass),
+            selectedIcon: Icon(LucideIcons.compass, fill: 1),
             label: 'Explore',
           ),
           NavigationDestination(
             icon: Icon(LucideIcons.library),
+            selectedIcon: Icon(LucideIcons.library, fill: 1),
             label: 'Library',
           ),
           NavigationDestination(
             icon: Icon(LucideIcons.user),
-            label: 'Profile',
+            selectedIcon: Icon(LucideIcons.user, fill: 1),
+            label: 'You',
           ),
         ],
       ),

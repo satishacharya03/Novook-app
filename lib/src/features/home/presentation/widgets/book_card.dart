@@ -3,12 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../core/utils/color_utils.dart';
+import '../../../../widgets/book_actions_sheet.dart';
 import '../../domain/book.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
 
   const BookCard({super.key, required this.book});
+
+  String _getTimeAgo(DateTime? date) {
+    if (date == null) return '';
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    
+    if (difference.inDays > 365) {
+      return '${(difference.inDays / 365).floor()} years ago';
+    } else if (difference.inDays > 30) {
+      return '${(difference.inDays / 30).floor()} months ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} minutes ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  String _formatViews(int views) {
+    if (views >= 1000000) {
+      return '${(views / 1000000).toStringAsFixed(1)}M views';
+    } else if (views >= 1000) {
+      return '${(views / 1000).toStringAsFixed(1)}K views';
+    }
+    return '$views views';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +190,7 @@ class BookCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${book.views} views • 2 days ago', // TODO: Implement relative time
+                    '${_formatViews(book.views)} • ${_getTimeAgo(book.createdAt)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -172,7 +202,7 @@ class BookCard extends StatelessWidget {
             IconButton(
               icon: const Icon(LucideIcons.moreVertical, size: 18),
               onPressed: () {
-                // Show modal bottom sheet
+                BookActionsSheet.show(context, book);
               },
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:novook/src/features/auth/presentation/login_screen.dart';
+import 'package:novook/src/features/auth/presentation/register_screen.dart';
 import 'package:novook/src/features/book_player/presentation/book_player_screen.dart';
 import 'package:novook/src/features/home/presentation/explore_screen.dart';
 import 'package:novook/src/features/home/presentation/home_screen.dart';
@@ -76,6 +77,11 @@ GoRouter goRouter(Ref ref) {
         path: '/login',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
         path: '/settings',
