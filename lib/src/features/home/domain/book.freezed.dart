@@ -11,7 +11,6 @@ part of 'book.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$Book {
 
@@ -23,8 +22,6 @@ mixin _$Book {
 @pragma('vm:prefer-inline')
 $BookCopyWith<Book> get copyWith => _$BookCopyWithImpl<Book>(this as Book, _$identity);
 
-  /// Serializes this Book to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -32,7 +29,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is Book&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.cover, cover) || other.cover == cover)&&(identical(other.coverColor, coverColor) || other.coverColor == coverColor)&&(identical(other.uploader, uploader) || other.uploader == uploader)&&(identical(other.uploaderId, uploaderId) || other.uploaderId == uploaderId)&&(identical(other.views, views) || other.views == views)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.content, content)&&(identical(other.type, type) || other.type == type));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,title,author,coverUrl,cover,coverColor,uploader,uploaderId,views,timestamp,createdAt,fileUrl,const DeepCollectionEquality().hash(content),type);
 
@@ -232,11 +229,11 @@ return $default(_that.id,_that.title,_that.author,_that.coverUrl,_that.cover,_th
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _Book implements Book {
   const _Book({required this.id, required this.title, required this.author, this.coverUrl, this.cover, this.coverColor, this.uploader, this.uploaderId, this.views = 0, this.timestamp, this.createdAt, this.fileUrl, this.content, this.type = 'text'});
-  factory _Book.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);
+  
 
 @override final  String id;
 @override final  String title;
@@ -260,17 +257,14 @@ class _Book implements Book {
 @pragma('vm:prefer-inline')
 _$BookCopyWith<_Book> get copyWith => __$BookCopyWithImpl<_Book>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$BookToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _Book&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.cover, cover) || other.cover == cover)&&(identical(other.coverColor, coverColor) || other.coverColor == coverColor)&&(identical(other.uploader, uploader) || other.uploader == uploader)&&(identical(other.uploaderId, uploaderId) || other.uploaderId == uploaderId)&&(identical(other.views, views) || other.views == views)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.content, content)&&(identical(other.type, type) || other.type == type));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,title,author,coverUrl,cover,coverColor,uploader,uploaderId,views,timestamp,createdAt,fileUrl,const DeepCollectionEquality().hash(content),type);
 

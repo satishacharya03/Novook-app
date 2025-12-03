@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:page_flip/page_flip.dart';
+import '../../../../widgets/page_flip/page_flip.dart';
 import 'package:pdfrx/pdfrx.dart';
 import '../../../home/domain/book.dart';
 import 'book_player_controls.dart';

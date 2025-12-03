@@ -1,6 +1,6 @@
 {
-    "name": "novook_mobile",
-    "short_name": "novook_mobile",
+    "name": "novook",
+    "short_name": "novook",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

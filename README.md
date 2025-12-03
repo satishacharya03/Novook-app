@@ -1,4 +1,4 @@
-# novook_mobile
+# novook
 
 A new Flutter project.
 

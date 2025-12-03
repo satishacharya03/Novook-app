@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../data/book_repository.dart';
 import 'widgets/book_card.dart';
@@ -22,7 +23,10 @@ class HomeScreen extends ConsumerWidget {
               style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
             ),
             actions: [
-              IconButton(icon: const Icon(LucideIcons.search), onPressed: () {}),
+              IconButton(
+                icon: const Icon(LucideIcons.search),
+                onPressed: () => GoRouter.of(context).push('/search'),
+              ),
               IconButton(icon: const Icon(LucideIcons.bell), onPressed: () {}),
               const Padding(
                 padding: EdgeInsets.only(right: 16.0),

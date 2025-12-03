@@ -1,4 +1,4 @@
-name: novook_mobile
+name: novook
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -43,7 +43,7 @@ dependencies:
   cached_network_image: ^3.4.1
 
   pdfrx: ^2.2.16
-  page_flip: ^0.2.5+1
+
   lucide_icons: ^0.257.0
   google_fonts: ^6.3.3
   flutter_animate: ^4.5.2
@@ -51,6 +51,7 @@ dependencies:
   cookie_jar: ^4.0.8
   path_provider: ^2.1.5
   riverpod_annotation: ^3.0.3
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

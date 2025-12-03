@@ -1,4 +1,4 @@
-package com.example.novook_mobile
+package com.example.novook
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:novook_mobile/src/core/theme/theme.dart';
-import 'package:novook_mobile/src/routing/app_router.dart';
+import 'package:novook/src/core/theme/theme.dart';
+import 'package:novook/src/routing/app_router.dart';
+
+import 'package:novook/src/features/settings/presentation/settings_controller.dart';
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -9,14 +11,15 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(goRouterProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp.router(
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
       title: 'novook',
-      theme: ThemeData.light(), // Fallback or implement light theme later
+      theme: ThemeData.light(),
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark, // Force dark mode for now as per design
+      themeMode: themeMode,
     );
   }
 }
