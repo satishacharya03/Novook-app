@@ -12,6 +12,7 @@ import 'package:novook/src/features/settings/presentation/settings_screen.dart';
 import 'package:novook/src/features/search/presentation/search_screen.dart';
 import 'package:novook/src/features/trending/presentation/trending_screen.dart';
 import 'package:novook/src/features/downloads/presentation/downloads_screen.dart';
+import 'package:novook/src/features/splash/presentation/splash_screen.dart';
 import 'package:novook/src/routing/scaffold_with_navbar.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -26,7 +27,7 @@ final _shellNavigatorProfileKey = GlobalKey<NavigatorState>(debugLabel: 'profile
 @riverpod
 GoRouter goRouter(Ref ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/splash',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: [
@@ -72,6 +73,11 @@ GoRouter goRouter(Ref ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/splash',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: '/login',
