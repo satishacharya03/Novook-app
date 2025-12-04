@@ -30,15 +30,14 @@ class HomeScreen extends ConsumerWidget {
               surfaceTintColor: Colors.transparent,
               title: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.gradientStart, AppColors.gradientEnd],
-                      ),
-                      borderRadius: BorderRadius.circular(10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      'assets/images/novook-logo.png',
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.cover,
                     ),
-                    child: const Icon(LucideIcons.bookOpen, size: 20, color: Colors.white),
                   ),
                   const SizedBox(width: 10),
                   Text(
