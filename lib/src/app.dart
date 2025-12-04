@@ -17,7 +17,7 @@ class MyApp extends ConsumerWidget {
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
       title: 'novook',
-      theme: ThemeData.light(),
+      theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
     );

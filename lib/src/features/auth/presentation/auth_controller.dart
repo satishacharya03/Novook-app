@@ -68,6 +68,42 @@ class AuthController extends _$AuthController {
     }
   }
 
+  /// Set authentication from Google Sign-In
+  Future<void> setAuthFromGoogle(Map<String, dynamic> userData, String token) async {
+    state = const AsyncValue.loading();
+    try {
+      print('📝 Creating user from Google data...');
+      print('User data received: $userData');
+      
+      final user = User(
+        id: userData['id']?.toString() ?? '',
+        email: userData['email'] ?? '',
+        name: userData['name'] ?? 'User',
+        image: userData['image'] ?? userData['photoUrl'],
+      );
+      
+      print('👤 User created: ${user.email}');
+      print('🔑 Token: ${token.substring(0, 20)}...');
+      
+      final authService = await ref.read(authServiceProvider.future);
+      
+      print('💾 Saving token to storage...');
+      await authService.saveToken(token);
+      
+      print('💾 Saving user to storage...');
+      await authService.saveUser(user);
+      
+      print('✅ Auth state saved, updating UI state...');
+      state = AsyncValue.data(user);
+      
+      print('🎉 Authentication state update complete!');
+    } catch (e, stackTrace) {
+      print('❌ Error setting auth from Google: $e');
+      print('Stack trace: $stackTrace');
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+
   Future<void> logout() async {
     final authService = await ref.read(authServiceProvider.future);
     await authService.clearAuth();

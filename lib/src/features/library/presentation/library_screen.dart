@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../../core/theme/theme.dart';
 import '../data/bookmarks_repository.dart';
 import '../data/history_repository.dart';
 import '../data/playlists_repository.dart';
@@ -35,66 +36,163 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
     final isLoggedIn = ref.watch(isLoggedInProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Library'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(icon: Icon(LucideIcons.history), text: 'History'),
-            Tab(icon: Icon(LucideIcons.bookmark), text: 'Saved'),
-            Tab(icon: Icon(LucideIcons.listVideo), text: 'Playlists'),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.search),
-            onPressed: () => context.push('/search'),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            floating: true,
+            pinned: true,
+            expandedHeight: 60,
+            title: Text(
+              'Library',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(LucideIcons.search, size: 20),
+                ),
+                onPressed: () => context.push('/search'),
+              ),
+              const SizedBox(width: 16),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColors.surfaceContainerHighest.withAlpha(50),
+                    ),
+                  ),
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  tabs: [
+                    Tab(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(LucideIcons.history, size: 18),
+                          const SizedBox(width: 8),
+                          const Text('History'),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(LucideIcons.bookmark, size: 18),
+                          const SizedBox(width: 8),
+                          const Text('Saved'),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(LucideIcons.listVideo, size: 18),
+                          const SizedBox(width: 8),
+                          const Text('Playlists'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
+        body: isLoggedIn
+            ? TabBarView(
+                controller: _tabController,
+                children: const [
+                  _HistoryTab(),
+                  _BookmarksTab(),
+                  _PlaylistsTab(),
+                ],
+              )
+            : _buildLoginPrompt(context),
       ),
-      body: isLoggedIn
-          ? TabBarView(
-              controller: _tabController,
-              children: const [
-                _HistoryTab(),
-                _BookmarksTab(),
-                _PlaylistsTab(),
-              ],
-            )
-          : _buildLoginPrompt(context),
     );
   }
 
   Widget _buildLoginPrompt(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              LucideIcons.logIn,
-              size: 64,
-              color: Theme.of(context).colorScheme.primary,
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primaryAccent.withAlpha(40),
+                    AppColors.secondaryAccent.withAlpha(40),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Icon(
+                LucideIcons.library,
+                size: 48,
+                color: AppColors.primaryAccent,
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             Text(
-              'Sign in to access your library',
-              style: Theme.of(context).textTheme.titleLarge,
-              textAlign: TextAlign.center,
+              'Your Library Awaits',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Keep track of your reading history, saved books, and playlists',
+              'Sign in to access your reading history,\nsaved books, and playlists',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: AppColors.textTertiary,
+                height: 1.5,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: () => context.push('/login'),
-              child: const Text('Sign In'),
+            const SizedBox(height: 32),
+            Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                ),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryAccent.withAlpha(60),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: FilledButton.icon(
+                onPressed: () => context.push('/login'),
+                icon: const Icon(LucideIcons.logIn, size: 18),
+                label: const Text('Sign In'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                ),
+              ),
             ),
           ],
         ),
@@ -116,13 +214,14 @@ class _HistoryTab extends ConsumerWidget {
           return _buildEmptyState(
             context,
             icon: LucideIcons.history,
-            title: 'No reading history',
+            title: 'No reading history yet',
             subtitle: 'Books you read will appear here',
           );
         }
-        return ListView.builder(
-          padding: const EdgeInsets.only(top: 8),
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
           itemCount: history.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final item = history[index];
             return _HistoryItem(item: item);
@@ -130,20 +229,7 @@ class _HistoryTab extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(LucideIcons.alertCircle, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
-            Text('Failed to load history'),
-            TextButton(
-              onPressed: () => ref.refresh(readingHistoryProvider),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      ),
+      error: (error, _) => _buildErrorState(context, ref, () => ref.invalidate(readingHistoryProvider)),
     );
   }
 
@@ -156,19 +242,60 @@ class _HistoryTab extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainer,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Icon(
+              icon,
+              size: 48,
+              color: AppColors.textTertiary,
+            ),
           ),
-          const SizedBox(height: 16),
-          Text(title, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 24),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             subtitle,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: AppColors.textTertiary,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, VoidCallback onRefresh) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.error.withAlpha(20),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(LucideIcons.alertCircle, size: 40, color: AppColors.error),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Failed to load',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: onRefresh,
+            icon: const Icon(LucideIcons.refreshCw, size: 16),
+            label: const Text('Try Again'),
           ),
         ],
       ),
@@ -183,46 +310,114 @@ class _HistoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        width: 80,
-        height: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: item.book.coverUrl != null
-            ? Image.network(item.book.coverUrl!, fit: BoxFit.cover)
-            : Center(
-                child: Text(
-                  item.book.title.substring(0, 1).toUpperCase(),
-                  style: Theme.of(context).textTheme.titleLarge,
+    return Card(
+      child: InkWell(
+        onTap: () => context.push('/book/${item.bookId}', extra: item.book),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              // Cover
+              Container(
+                width: 70,
+                height: 90,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(40),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: item.book.coverUrl != null
+                    ? Image.network(item.book.coverUrl!, fit: BoxFit.cover)
+                    : Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.primaryAccent.withAlpha(80),
+                              AppColors.secondaryAccent.withAlpha(80),
+                            ],
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            item.book.title.substring(0, 1).toUpperCase(),
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+              ),
+              const SizedBox(width: 16),
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.book.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.book.author,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Progress bar
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: item.progress / 100,
+                            backgroundColor: AppColors.surfaceContainerHighest,
+                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryAccent),
+                            minHeight: 4,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${item.progress}% completed',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-      ),
-      title: Text(
-        item.book.title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(item.book.author),
-          const SizedBox(height: 4),
-          LinearProgressIndicator(
-            value: item.progress / 100,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+              // Continue button
+              IconButton(
+                onPressed: () => context.push('/book/${item.bookId}', extra: item.book),
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryAccent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(LucideIcons.play, size: 16, color: Colors.white),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 2),
-          Text(
-            '${item.progress}% completed',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
+        ),
       ),
-      onTap: () => context.push('/book/${item.bookId}', extra: item.book),
     );
   }
 }
@@ -241,33 +436,48 @@ class _BookmarksTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  LucideIcons.bookmark,
-                  size: 64,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceContainer,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Icon(
+                    LucideIcons.bookmark,
+                    size: 48,
+                    color: AppColors.textTertiary,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                Text('No saved books', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 24),
+                Text(
+                  'No saved books yet',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'Tap the bookmark icon to save books',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: AppColors.textTertiary,
                   ),
                 ),
               ],
             ),
           );
         }
-        return ListView.builder(
-          padding: const EdgeInsets.only(top: 8),
+        return GridView.builder(
+          padding: const EdgeInsets.all(16),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.65,
+          ),
           itemCount: bookmarks.length,
           itemBuilder: (context, index) {
             final item = bookmarks[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: BookCard(book: item.book),
-            );
+            return BookCard(book: item.book);
           },
         );
       },
@@ -276,12 +486,20 @@ class _BookmarksTab extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.alertCircle, size: 48, color: Colors.red),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.error.withAlpha(20),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(LucideIcons.alertCircle, size: 40, color: AppColors.error),
+            ),
             const SizedBox(height: 16),
             Text('Failed to load bookmarks'),
-            TextButton(
+            TextButton.icon(
               onPressed: () => ref.refresh(bookmarksProvider),
-              child: const Text('Retry'),
+              icon: const Icon(LucideIcons.refreshCw, size: 16),
+              label: const Text('Try Again'),
             ),
           ],
         ),
@@ -301,13 +519,45 @@ class _PlaylistsTab extends ConsumerWidget {
       data: (playlists) {
         return CustomScrollView(
           slivers: [
+            // New Playlist Button
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: OutlinedButton.icon(
-                  onPressed: () => _showCreatePlaylistDialog(context, ref),
-                  icon: const Icon(LucideIcons.plus),
-                  label: const Text('New Playlist'),
+                child: InkWell(
+                  onTap: () => _showCreatePlaylistDialog(context, ref),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppColors.primaryAccent.withAlpha(100),
+                        width: 2,
+                        strokeAlign: BorderSide.strokeAlignInside,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryAccent.withAlpha(30),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(LucideIcons.plus, color: AppColors.primaryAccent, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Create New Playlist',
+                          style: TextStyle(
+                            color: AppColors.primaryAccent,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -317,18 +567,30 @@ class _PlaylistsTab extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        LucideIcons.listVideo,
-                        size: 64,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceContainer,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Icon(
+                          LucideIcons.listVideo,
+                          size: 48,
+                          color: AppColors.textTertiary,
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      Text('No playlists yet', style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 24),
+                      Text(
+                        'No playlists yet',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         'Create playlists to organize your books',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: AppColors.textTertiary,
                         ),
                       ),
                     ],
@@ -340,23 +602,10 @@ class _PlaylistsTab extends ConsumerWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final playlist = playlists[index];
-                    return ListTile(
-                      leading: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                        ),
-                        child: const Icon(LucideIcons.listVideo),
-                      ),
-                      title: Text(playlist.name),
-                      subtitle: Text('${playlist.books.length} books'),
-                      trailing: IconButton(
-                        icon: const Icon(LucideIcons.moreVertical),
-                        onPressed: () => _showPlaylistOptions(context, ref, playlist),
-                      ),
+                    return _PlaylistItem(
+                      playlist: playlist,
                       onTap: () => context.push('/playlist/${playlist.id}'),
+                      onOptions: () => _showPlaylistOptions(context, ref, playlist),
                     );
                   },
                   childCount: playlists.length,
@@ -370,12 +619,13 @@ class _PlaylistsTab extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.alertCircle, size: 48, color: Colors.red),
+            Icon(LucideIcons.alertCircle, size: 40, color: AppColors.error),
             const SizedBox(height: 16),
             Text('Failed to load playlists'),
-            TextButton(
+            TextButton.icon(
               onPressed: () => ref.refresh(playlistsProvider),
-              child: const Text('Retry'),
+              icon: const Icon(LucideIcons.refreshCw, size: 16),
+              label: const Text('Try Again'),
             ),
           ],
         ),
@@ -391,11 +641,13 @@ class _PlaylistsTab extends ConsumerWidget {
         title: const Text('New Playlist'),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Playlist name',
             hintText: 'Enter playlist name',
+            prefixIcon: const Icon(LucideIcons.listVideo),
           ),
           autofocus: true,
+          textCapitalization: TextCapitalization.words,
         ),
         actions: [
           TextButton(
@@ -411,6 +663,12 @@ class _PlaylistsTab extends ConsumerWidget {
                   );
                   ref.refresh(playlistsProvider);
                   Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Playlist "${nameController.text}" created'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Failed to create playlist: $e')),
@@ -428,33 +686,137 @@ class _PlaylistsTab extends ConsumerWidget {
   void _showPlaylistOptions(BuildContext context, WidgetRef ref, Playlist playlist) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(LucideIcons.edit),
-            title: const Text('Rename'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Show rename dialog
-            },
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(LucideIcons.edit, size: 20),
+              ),
+              title: const Text('Rename'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withAlpha(20),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(LucideIcons.trash2, size: 20, color: AppColors.error),
+              ),
+              title: Text('Delete', style: TextStyle(color: AppColors.error)),
+              onTap: () async {
+                Navigator.pop(context);
+                try {
+                  await ref.read(playlistsRepositoryProvider).deletePlaylist(playlist.id);
+                  ref.refresh(playlistsProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Playlist deleted'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to delete: $e')),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PlaylistItem extends StatelessWidget {
+  final Playlist playlist;
+  final VoidCallback onTap;
+  final VoidCallback onOptions;
+
+  const _PlaylistItem({
+    required this.playlist,
+    required this.onTap,
+    required this.onOptions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Card(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryAccent.withAlpha(80),
+                        AppColors.secondaryAccent.withAlpha(80),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(LucideIcons.listVideo, color: Colors.white),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        playlist.name,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${playlist.books.length} books',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: onOptions,
+                  icon: Icon(LucideIcons.moreVertical, color: AppColors.textTertiary),
+                ),
+              ],
+            ),
           ),
-          ListTile(
-            leading: const Icon(LucideIcons.trash2, color: Colors.red),
-            title: const Text('Delete', style: TextStyle(color: Colors.red)),
-            onTap: () async {
-              Navigator.pop(context);
-              try {
-                await ref.read(playlistsRepositoryProvider).deletePlaylist(playlist.id);
-                ref.refresh(playlistsProvider);
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to delete: $e')),
-                );
-              }
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
